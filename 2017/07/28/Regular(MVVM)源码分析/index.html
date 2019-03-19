@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="Regularjs是网易开源的mvvm框架，今天就以Regularjs为例阅读源码片段，便于更好的理解脏检测双向绑定的原理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Regular(MVVM)源码分析">
+<meta property="og:url" content="http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/index.html">
+<meta property="og:site_name" content="Alex">
+<meta property="og:description" content="Regularjs是网易开源的mvvm框架，今天就以Regularjs为例阅读源码片段，便于更好的理解脏检测双向绑定的原理。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-19T15:21:35.167Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Regular(MVVM)源码分析">
+<meta name="twitter:description" content="Regularjs是网易开源的mvvm框架，今天就以Regularjs为例阅读源码片段，便于更好的理解脏检测双向绑定的原理。">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/avatar_s.png">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/avatar_s.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar_s.png">
+          
+        
+    
+    <!-- title -->
+    <title>Regular(MVVM)源码分析</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2017/09/06/消除代码块中繁杂的if else/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2017/07/12/实现自己的virtual-dom/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&text=Regular(MVVM)源码分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&title=Regular(MVVM)源码分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&is_video=false&description=Regular(MVVM)源码分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Regular(MVVM)源码分析&body=Check out this article: http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&title=Regular(MVVM)源码分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&title=Regular(MVVM)源码分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&title=Regular(MVVM)源码分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&title=Regular(MVVM)源码分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&name=Regular(MVVM)源码分析&description=&lt;p&gt;&lt;a href=&#34;https://github.com/regularjs/regular/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Regularjs&lt;/a&gt;是网易开源的mvvm框架，今天就以Regularjs为例阅读源码片段，便于更好的理解脏检测双向绑定的原理。&lt;br&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#实例"><span class="toc-number">1.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#模板编译"><span class="toc-number">2.</span> <span class="toc-text">模板编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#update方法"><span class="toc-number">3.</span> <span class="toc-text">$update方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#digest方法"><span class="toc-number">4.</span> <span class="toc-text">$digest方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#digest方法-1"><span class="toc-number">5.</span> <span class="toc-text">_digest方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#处理-if-else"><span class="toc-number">6.</span> <span class="toc-text">处理 if else</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#compile方法"><span class="toc-number">7.</span> <span class="toc-text">$compile方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#walk方法"><span class="toc-number">8.</span> <span class="toc-text">_walk方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">9.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Regular(MVVM)源码分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Alex</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-07-28T06:02:59.000Z" itemprop="datePublished">2017-07-28</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><a href="https://github.com/regularjs/regular/" target="_blank" rel="noopener">Regularjs</a>是网易开源的mvvm框架，今天就以Regularjs为例阅读源码片段，便于更好的理解脏检测双向绑定的原理。<br><a id="more"></a></p>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"wrapper"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Button = Regular.extend(&#123;</span><br><span class="line">            name: <span class="string">'UIButton'</span>,</span><br><span class="line">            template: <span class="string">'&lt;button on-click=&#123;this.click()&#125;&gt;&#123; #if flag&#125;&lt;span&gt;&#123;label&#125;&lt;/span&gt;&#123; #else&#125;no&#123;/if&#125;&lt;/button&gt;'</span>,</span><br><span class="line">            click: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">                <span class="keyword">debugger</span>;</span><br><span class="line">                <span class="keyword">this</span>.data.flag = !<span class="keyword">this</span>.data.flag;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="keyword">var</span> TestUI = Regular.extend(&#123;</span><br><span class="line">            template: <span class="string">'&lt;div style="margin: 100px"&gt;&#123;value&#125;&lt;UIButton label="button"&gt;&lt;/UIButton&gt;&lt;/div&gt;'</span></span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">new</span> TestUI(&#123;</span><br><span class="line">            data: &#123;</span><br><span class="line">                label: <span class="string">'button show'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).$inject(<span class="string">"#wrapper"</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="模板编译"><a href="#模板编译" class="headerlink" title="模板编译"></a>模板编译</h2><p>模板编译应该是Regular中最复杂的代码了，但功能很单一，就是将一段html文本转换为相应的对象。</p>
+<p>模板在编译时会生成以下几类元素对象：</p>
+<ul>
+<li>attribute （nodeType==2类型）</li>
+<li>component （自定义组件类型）</li>
+<li>element   （nodeType==1类型）</li>
+<li>expression（{label}类型）</li>
+<li>if        （{ #if}{ #else}类型）</li>
+<li>list      （{ #list}循环类型）</li>
+<li>text          （nodeType==3类型）</li>
+</ul>
+<p>在本例中，一共定义了两个Regular类，TestUI的模板中引用到了Button类。<br> 在实例化TestUI的时候会先编译模板，将</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">"margin: 100px"</span>&gt;</span></span><br><span class="line">	&#123;value&#125;</span><br><span class="line">	<span class="tag">&lt;<span class="name">UIButton</span> <span class="attr">label</span>=<span class="string">"button"</span>&gt;</span><span class="tag">&lt;/<span class="name">UIButton</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>转化为对象构成数结构的对象：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> vdom = [&#123;</span><br><span class="line">            attrs: [&#123;<span class="attr">name</span>: <span class="string">'style'</span>, <span class="attr">type</span>: <span class="string">'attribute'</span>, <span class="attr">value</span>: <span class="string">'margin:100px'</span>&#125;],</span><br><span class="line">            children: [&#123;</span><br><span class="line">                body: <span class="string">"c._sg_('value', d, e)"</span>,</span><br><span class="line">                constant: <span class="literal">false</span>,</span><br><span class="line">                setbody: <span class="string">"c._ss_('value',p_,d, '=', 1)"</span>,</span><br><span class="line">                type: <span class="string">"expression"</span></span><br><span class="line">            &#125;, &#123;</span><br><span class="line">                type: <span class="string">'element'</span>,</span><br><span class="line">                tag: <span class="string">'UIButton'</span>,</span><br><span class="line">                attrs: [&#123;<span class="attr">type</span>: <span class="string">'attribute'</span>, <span class="attr">name</span>: <span class="string">'label'</span>, <span class="attr">value</span>: <span class="string">'button'</span>&#125;],</span><br><span class="line">                children: []</span><br><span class="line">            &#125;],</span><br><span class="line">            tag: <span class="string">'div'</span>,</span><br><span class="line">            type: <span class="string">'element'</span></span><br><span class="line">        &#125;]</span><br></pre></td></tr></table></figure>
+<p>walkers.expression方法用来处理模板中的{value}， 会生成一个textNode，并$watch，<br>这段代码就揭示了双向绑定的原理，当值变化时更新dom。也可以看出来这种更新是很细粒度的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">walkers.expression = <span class="function"><span class="keyword">function</span>(<span class="params">ast, options</span>)</span>&#123;</span><br><span class="line">	  <span class="keyword">var</span> node = <span class="built_in">document</span>.createTextNode(<span class="string">""</span>);</span><br><span class="line">	  <span class="keyword">this</span>.$watch(ast, <span class="function"><span class="keyword">function</span>(<span class="params">newval</span>)</span>&#123;</span><br><span class="line">	    dom.text(node, <span class="string">""</span> + (newval == <span class="literal">null</span>? <span class="string">""</span>: <span class="string">""</span> + newval) );</span><br><span class="line">	  &#125;,&#123;<span class="attr">init</span>: <span class="literal">true</span>&#125;)</span><br><span class="line">	  <span class="keyword">return</span> node;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>$watch方法会push一个watch对象到this._watchers数组中，用于日后统一更新。<br>然后执行_checkSingleWatch方法，如果now与last值不等则dirty=true进行watch更新dom。</p>
+<p>walkers.element方法用来处理模板中的标签元素和自定义组件，如本例中的div、UIButton</p>
+<p>当生成一个Regular类并带有name属性的时候会保存在Regular._components对象上。如果在模板中匹配到类的name则使用类进行标签初始化。</p>
+<p>walkers.component在walkers.element中进行调用，此方法中会进行自定义组件的data初始化:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data[<span class="string">'label'</span>] = <span class="string">'button'</span></span><br></pre></td></tr></table></figure>
+<p>然后会new一个UIButton实例，并且会保存进$parent._children数组中，用于后续操作，本例中$parent为TestUI的实例</p>
+<p>walkers[‘if’]处理模板中的if else.</p>
+<p>walkers.text方法用于处理正常的字符串</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">walkers.text = <span class="function"><span class="keyword">function</span>(<span class="params">ast, options</span>)</span>&#123;</span><br><span class="line">	  <span class="keyword">var</span> node = <span class="built_in">document</span>.createTextNode(_.convertEntity(ast.text));</span><br><span class="line">	  <span class="keyword">return</span> node;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="update方法"><a href="#update方法" class="headerlink" title="$update方法"></a>$update方法</h2><p>this.$update方法会找到最外层组件进行更新，所以不管是哪一层的子组件更新，都会“冒泡”到最上层组件进行更新检测。当然Regular提供了data.isolate用来阻止组件向上“冒泡”</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$update: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	    <span class="keyword">var</span> rootParent = <span class="keyword">this</span>;</span><br><span class="line">	    <span class="keyword">do</span>&#123;</span><br><span class="line">	      <span class="keyword">if</span>(rootParent.data.isolate || !rootParent.$parent) <span class="keyword">break</span>;</span><br><span class="line">	      rootParent = rootParent.$parent;</span><br><span class="line">	    &#125; <span class="keyword">while</span>(rootParent)</span><br><span class="line"></span><br><span class="line">	    <span class="keyword">var</span> prephase =rootParent.$phase;</span><br><span class="line">	    rootParent.$phase = <span class="string">'digest'</span></span><br><span class="line"></span><br><span class="line">	    <span class="keyword">this</span>.$<span class="keyword">set</span>.apply(this, arguments);</span><br><span class="line"></span><br><span class="line">	    rootParent.$phase = prephase</span><br><span class="line"></span><br><span class="line">	    rootParent.$digest();</span><br><span class="line">	    return this;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="digest方法"><a href="#digest方法" class="headerlink" title="$digest方法"></a>$digest方法</h2><p>当dom都渲染好了之后如何更新dom呢？this.$update()方法中会调用$digest方法，$digest会进行脏检测。</p>
+<p>$digest方法中会进行$phase判断，如果正在脏检测则直接return，所以在$update的回调函数（如regular提供的事件函数）中调用$update方法是无效操作，这样有利于避免频繁的无用的更新操作。<br>$digest方法里有一个while循环，如果循环20次以上则认为出了问题并抛错。在进行$digest时，只要有任何的组件dirty=true都会再进入循环，直到所有组件dirty=false。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$digest: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">this</span>.$phase === <span class="string">'digest'</span> || <span class="keyword">this</span>._mute) <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">this</span>.$phase = <span class="string">'digest'</span>;</span><br><span class="line">    <span class="keyword">var</span> dirty = <span class="literal">false</span>, n =<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(dirty = <span class="keyword">this</span>._digest())&#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span>((++n) &gt; <span class="number">20</span>)&#123; <span class="comment">// max loop</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="built_in">Error</span>(<span class="string">'there may a circular dependencies reaches'</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>( n &gt; <span class="number">0</span> &amp;&amp; <span class="keyword">this</span>.$emit) &#123;</span><br><span class="line">      <span class="keyword">this</span>.$emit(<span class="string">"$update"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">this</span>.$phase = <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="digest方法-1"><a href="#digest方法-1" class="headerlink" title="_digest方法"></a>_digest方法</h2><p>一个组件是否dirty和两个因素有关：</p>
+<ol>
+<li>组件所有监听的数据是否dirty（组件本身的监听的变量是否dirty）</li>
+<li>组件所有的子组件是否dirty（组件包含的子组件是否dirty）</li>
+</ol>
+<p>组件本身监听函数保存在this._watchers数组中，组件的子组件实例保存在this.children数组中。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">_digest: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> watchers = <span class="keyword">this</span>._watchers;</span><br><span class="line">    <span class="keyword">var</span> dirty = <span class="literal">false</span>, children, watcher, watcherDirty;</span><br><span class="line">    <span class="keyword">var</span> len = watchers &amp;&amp; watchers.length;</span><br><span class="line">    <span class="keyword">if</span>(len)&#123;</span><br><span class="line">      <span class="keyword">for</span>(<span class="keyword">var</span> i =<span class="number">0</span>; i &lt; len; i++ )&#123;</span><br><span class="line">        watcher = watchers[i];</span><br><span class="line">        <span class="keyword">if</span>( !watcher ||  watcher.removed )&#123;</span><br><span class="line">          watchers.splice( i--, <span class="number">1</span> );</span><br><span class="line">          len--;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">          watcherDirty = <span class="keyword">this</span>._checkSingleWatch(watcher, i);</span><br><span class="line">          <span class="keyword">if</span>(watcherDirty) dirty = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// check children's dirty.</span></span><br><span class="line">    children = <span class="keyword">this</span>._children;</span><br><span class="line">    <span class="keyword">if</span>(children &amp;&amp; children.length)&#123;</span><br><span class="line">      <span class="keyword">for</span>(<span class="keyword">var</span> m = <span class="number">0</span>, mlen = children.length; m &lt; mlen; m++)&#123;</span><br><span class="line">        <span class="keyword">var</span> child = children[m];</span><br><span class="line">        <span class="keyword">if</span>(child &amp;&amp; child._digest()) dirty = <span class="literal">true</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dirty;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h2 id="处理-if-else"><a href="#处理-if-else" class="headerlink" title="处理 if else"></a>处理 if else</h2><p>Regular会将if else 模板的值保存在group数组中，并为flag变量注册一个watcher，当flag变化的时候，先删除掉之前保存在group中的dom，然后生成新的dom并保存在goup中。</p>
+<p>处理if else的时候要解决unwatch的问题。在本例中，{ #if flag}值为true的时候会多注册一个{label}的express监听。当flag==false的时候，这个监听就没用了，所以这个时候要unwatch掉这个监听。</p>
+<p>Regular是如何做到的呢？Regualr在注册对flag的监听函数的回调函数中（下边的update）调用$compile方法，此方法会根据if else 中夹杂的模板生成相应的dom。</p>
+<ul>
+<li>flag = true  —&gt; &lt;span&gt;{label}&lt;/span&gt;</li>
+<li>flag = false —&gt; no</li>
+</ul>
+<p>此方法的第二个参数{record:true}的意思是说：哦，我要收集一下这个模板里的所有watcher，日后用于删除哦！</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//&#123; #if flag&#125;监听函数的回调函数中, flag变化时触发</span></span><br><span class="line"><span class="keyword">var</span> update = <span class="function"><span class="keyword">function</span> (<span class="params">nvalue, old</span>)</span>&#123;</span><br><span class="line">	    <span class="keyword">var</span> value = !!nvalue;</span><br><span class="line">	    <span class="keyword">if</span>(value === preValue) <span class="keyword">return</span>;</span><br><span class="line">	    preValue = value;</span><br><span class="line">	    <span class="keyword">if</span>(group.children[<span class="number">1</span>])&#123;</span><br><span class="line">	      group.children[<span class="number">1</span>].destroy(<span class="literal">true</span>);</span><br><span class="line">	      group.children.pop();</span><br><span class="line">	    &#125;</span><br><span class="line">	    <span class="keyword">if</span>(value)&#123; <span class="comment">//true</span></span><br><span class="line">	      <span class="keyword">if</span>(ast.consequent &amp;&amp; ast.consequent.length)&#123;</span><br><span class="line">	        consequent = self.$compile( ast.consequent , &#123;<span class="attr">record</span>:<span class="literal">true</span>, <span class="attr">outer</span>: options.outer,<span class="attr">namespace</span>: namespace, <span class="attr">extra</span>:extra &#125;)</span><br><span class="line">	        <span class="comment">// placeholder.parentNode &amp;&amp; placeholder.parentNode.insertBefore( node, placeholder );</span></span><br><span class="line">	        group.push(consequent);</span><br><span class="line">	        <span class="keyword">if</span>(placeholder.parentNode)&#123;</span><br><span class="line">	          animate.inject(combine.node(consequent), placeholder, <span class="string">'before'</span>);</span><br><span class="line">	        &#125;</span><br><span class="line">	      &#125;</span><br><span class="line">	    &#125;<span class="keyword">else</span>&#123; <span class="comment">//false</span></span><br><span class="line">	      <span class="keyword">if</span>(ast.alternate &amp;&amp; ast.alternate.length)&#123;</span><br><span class="line">	        alternate = self.$compile(ast.alternate, &#123;<span class="attr">record</span>:<span class="literal">true</span>, <span class="attr">outer</span>: options.outer,<span class="attr">namespace</span>: namespace, <span class="attr">extra</span>:extra&#125;);</span><br><span class="line">	        group.push(alternate);</span><br><span class="line">	        <span class="keyword">if</span>(placeholder.parentNode)&#123;</span><br><span class="line">	          animate.inject(combine.node(alternate), placeholder, <span class="string">'before'</span>);</span><br><span class="line">	        &#125;</span><br><span class="line">	      &#125;</span><br><span class="line">	    &#125;</span><br><span class="line">	  &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="compile方法"><a href="#compile方法" class="headerlink" title="$compile方法"></a>$compile方法</h2><p>$compile方法用于生成dom元素，第一个参数为编译好的html模板对象（本例中的vdom）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">$compile: <span class="function"><span class="keyword">function</span>(<span class="params">ast, options</span>)</span>&#123;</span><br><span class="line">    options = options || &#123;&#125;;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">typeof</span> ast === <span class="string">'string'</span>)&#123;</span><br><span class="line">      ast = <span class="keyword">new</span> Parser(ast).parse()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> preExt = <span class="keyword">this</span>.__ext__,</span><br><span class="line">      record = options.record,</span><br><span class="line">      records;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(options.extra) <span class="keyword">this</span>.__ext__ = options.extra;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//用于记录是否需要记录watcher，用于if else的watcher销毁</span></span><br><span class="line">    <span class="keyword">if</span>(record) <span class="keyword">this</span>._record();</span><br><span class="line">    <span class="comment">//遍历整个vdom数用于生成真实的dom树</span></span><br><span class="line">    <span class="keyword">var</span> group = <span class="keyword">this</span>._walk(ast, options);</span><br><span class="line">    <span class="keyword">if</span>(record)&#123;</span><br><span class="line">      records = <span class="keyword">this</span>._release();</span><br><span class="line">      <span class="keyword">var</span> self = <span class="keyword">this</span>;</span><br><span class="line">      <span class="keyword">if</span>(records.length)&#123;</span><br><span class="line">        <span class="comment">// auto destroy all wather;</span></span><br><span class="line">        group.ondestroy = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; self.$unwatch(records); &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(options.extra) <span class="keyword">this</span>.__ext__ = preExt;</span><br><span class="line">    <span class="keyword">return</span> group;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="walk方法"><a href="#walk方法" class="headerlink" title="_walk方法"></a>_walk方法</h2><p>_walk方法会遍历html树结构的对象，根据不同的元素类型生成对应的dom元素。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">_walk: <span class="function"><span class="keyword">function</span>(<span class="params">ast, arg1</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>( _.typeOf(ast) === <span class="string">'array'</span> )&#123;</span><br><span class="line">      <span class="keyword">var</span> res = [];</span><br><span class="line"></span><br><span class="line">      <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>, len = ast.length; i &lt; len; i++)&#123;</span><br><span class="line">        res.push( <span class="keyword">this</span>._walk(ast[i], arg1) );</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> Group(res);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">typeof</span> ast === <span class="string">'string'</span>) <span class="keyword">return</span> doc.createTextNode(ast)</span><br><span class="line">    <span class="keyword">return</span> walkers[ast.type || <span class="string">"default"</span>].call(<span class="keyword">this</span>, ast, arg1);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以上为Regular中较为重要的一些方法，日后会再做补充。</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#实例"><span class="toc-number">1.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#模板编译"><span class="toc-number">2.</span> <span class="toc-text">模板编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#update方法"><span class="toc-number">3.</span> <span class="toc-text">$update方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#digest方法"><span class="toc-number">4.</span> <span class="toc-text">$digest方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#digest方法-1"><span class="toc-number">5.</span> <span class="toc-text">_digest方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#处理-if-else"><span class="toc-number">6.</span> <span class="toc-text">处理 if else</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#compile方法"><span class="toc-number">7.</span> <span class="toc-text">$compile方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#walk方法"><span class="toc-number">8.</span> <span class="toc-text">_walk方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">9.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&text=Regular(MVVM)源码分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&title=Regular(MVVM)源码分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&is_video=false&description=Regular(MVVM)源码分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Regular(MVVM)源码分析&body=Check out this article: http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&title=Regular(MVVM)源码分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&title=Regular(MVVM)源码分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&title=Regular(MVVM)源码分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&title=Regular(MVVM)源码分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2017/07/28/Regular(MVVM)源码分析/&name=Regular(MVVM)源码分析&description=&lt;p&gt;&lt;a href=&#34;https://github.com/regularjs/regular/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Regularjs&lt;/a&gt;是网易开源的mvvm框架，今天就以Regularjs为例阅读源码片段，便于更好的理解脏检测双向绑定的原理。&lt;br&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Alex Liu
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'jjvvv';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>

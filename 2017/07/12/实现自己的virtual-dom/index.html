@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="通过实现一个短小的virtual dom，了解virtual dom的原理，进而加深对React的理解。项目地址 今天要实现的功能如下： 123456789101112131415161718//定义一个组件let MyButton = &amp;#123;	render: (&amp;#123;props, children&amp;#125;) =&amp;gt;		&amp;lt;button onClick=&amp;#123;add">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实现自己的virtual dom">
+<meta property="og:url" content="http://yoursite.com/2017/07/12/实现自己的virtual-dom/index.html">
+<meta property="og:site_name" content="Alex">
+<meta property="og:description" content="通过实现一个短小的virtual dom，了解virtual dom的原理，进而加深对React的理解。项目地址 今天要实现的功能如下： 123456789101112131415161718//定义一个组件let MyButton = &amp;#123;	render: (&amp;#123;props, children&amp;#125;) =&amp;gt;		&amp;lt;button onClick=&amp;#123;add">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-19T15:21:35.187Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="实现自己的virtual dom">
+<meta name="twitter:description" content="通过实现一个短小的virtual dom，了解virtual dom的原理，进而加深对React的理解。项目地址 今天要实现的功能如下： 123456789101112131415161718//定义一个组件let MyButton = &amp;#123;	render: (&amp;#123;props, children&amp;#125;) =&amp;gt;		&amp;lt;button onClick=&amp;#123;add">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/avatar_s.png">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/avatar_s.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar_s.png">
+          
+        
+    
+    <!-- title -->
+    <title>实现自己的virtual dom</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2017/07/28/Regular(MVVM)源码分析/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2017/03/09/安卓系统菊花实现/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2017/07/12/实现自己的virtual-dom/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&text=实现自己的virtual dom"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&title=实现自己的virtual dom"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&is_video=false&description=实现自己的virtual dom"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=实现自己的virtual dom&body=Check out this article: http://yoursite.com/2017/07/12/实现自己的virtual-dom/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&title=实现自己的virtual dom"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&title=实现自己的virtual dom"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&title=实现自己的virtual dom"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&title=实现自己的virtual dom"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&name=实现自己的virtual dom&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#创建"><span class="toc-number">1.</span> <span class="toc-text">创建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#更新"><span class="toc-number">2.</span> <span class="toc-text">更新</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        实现自己的virtual dom
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Alex</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2017-07-12T09:28:31.000Z" itemprop="datePublished">2017-07-12</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <!-- 实现自己的virtual dom[戳我](https://github.com/JJVvV/melon) -->
+<p>通过实现一个短小的virtual dom，了解virtual dom的原理，进而加深对React的理解。<a href="https://github.com/JJVvV/melon" target="_blank" rel="noopener">项目地址</a></p>
+<p>今天要实现的功能如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义一个组件</span></span><br><span class="line"><span class="keyword">let</span> MyButton = &#123;</span><br><span class="line">	render: <span class="function">(<span class="params">&#123;props, children&#125;</span>) =&gt;</span></span><br><span class="line">		&lt;button onClick=&#123;addCount&#125; &#123;...props&#125;&gt;&#123;children&#125;&#123;count&#125;&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp">let count = 0</span></span><br><span class="line"><span class="regexp">let addCount = () =&gt; &#123;</span></span><br><span class="line"><span class="regexp">	count++</span></span><br><span class="line"><span class="regexp">	app()</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/渲染函数，用来生成dom</span></span><br><span class="line"><span class="regexp">let render = createApp(document.body)</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">let app = () =&gt; &#123;</span></span><br><span class="line"><span class="regexp">	render(&lt;MyButton className="button"&gt;hello, button&lt;/</span>MyButton&gt;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app()</span><br></pre></td></tr></table></figure>
+<p>看起来是不是很像react？</p>
+<ol>
+<li>支持自定义组价（组件可互相嵌套）</li>
+<li>事件</li>
+<li>支持attribute</li>
+<li>组件的diff更新</li>
+</ol>
+<p>下面我们来一步步实现这些功能。</p>
+<p>使用过jsx的同学对它肯定很喜欢</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> wrapper = (</span><br><span class="line">	&lt;div className=<span class="string">"wrapper"</span>&gt;</span><br><span class="line">		&lt;span&gt;hello&lt;<span class="regexp">/span&gt;</span></span><br><span class="line"><span class="regexp">		&lt;span&gt; world!&lt;/</span>span&gt;</span><br><span class="line">	&lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">)</span></span><br></pre></td></tr></table></figure>
+<p>如果想使用jsx语法，我们可以借助于babel。babel在解析jsx的时候需要指定一个函数，如果你写过react的话，那默认是React.createElement函数。这里我们这里定义一个函数create:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">create</span>(<span class="params">type, attributes, ...children</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> &#123;</span><br><span class="line">		type,</span><br><span class="line">		props: attributes,</span><br><span class="line">		children</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有个这个函数wrapper， babel在解析wrapper的时候会依次传入type、attributes、child1、child2….</p>
+<p>下边的写法完全等价于上边的jsx语法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> wrapper = create(<span class="string">'div'</span>, &#123;<span class="attr">className</span>:<span class="string">'wrapper'</span>&#125;,</span><br><span class="line">	create(<span class="string">'span'</span>, &#123;&#125;, <span class="string">'hello'</span>),</span><br><span class="line">	create(<span class="string">'span'</span>, &#123;&#125;, <span class="string">'world!'</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h1><p>现在我们需要把wrapper转换为真正的dom，我们定义一个方法createElement:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/***</span></span><br><span class="line"><span class="comment">*	将vnode转换为dom</span></span><br><span class="line"><span class="comment">* 	@param &#123;Object&#125; vnode - 虚拟dom</span></span><br><span class="line"><span class="comment">*  @return &#123;Node&#125;  - dom</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createElement</span>(<span class="params">vnode</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">document</span>.createElement(vnode.type)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>createElement方法会将vnode转换为真实的dom，但是目前这个方法只能处理Element类型的元素，文本元素都无法处理。我们先看下有多少个类型需要处理。</p>
+<ol>
+<li>Element类型（native）</li>
+<li>Text类型（text）</li>
+<li>自定义组件类型， 如MyButton（thunk）</li>
+<li>空类型（empty）在react中会生成noscript。{undefined}就会生成一个空类型，空类型的作用在与站位，便于diff算法优化。</li>
+</ol>
+<p>所以我们来改写下createElement：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/***</span></span><br><span class="line"><span class="comment">*	将vnode转换为dom</span></span><br><span class="line"><span class="comment">* 	@param &#123;Object&#125; vnode - 虚拟dom</span></span><br><span class="line"><span class="comment">*  @return &#123;Node&#125;  - dom</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createElement</span>(<span class="params">vnode</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">switch</span>(vnode.type)&#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">'text'</span>:</span><br><span class="line">			<span class="comment">//文本类型</span></span><br><span class="line">			<span class="keyword">return</span> createTextNode(vnode.nodeValue)</span><br><span class="line">		<span class="keyword">case</span> <span class="string">'thunk'</span>:</span><br><span class="line">			<span class="comment">//自定义组件类型</span></span><br><span class="line">			<span class="keyword">return</span> createThunk(vnode)</span><br><span class="line">		<span class="keyword">case</span> <span class="string">'empty'</span>:</span><br><span class="line">			<span class="comment">//空类型</span></span><br><span class="line">          <span class="keyword">return</span> createEmptyHTMLElement()</span><br><span class="line">		<span class="keyword">case</span> <span class="string">'native'</span>:</span><br><span class="line">			<span class="keyword">return</span> createHTMLElement(vnode)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>写到这里，可能有些人会不知道vnode和vnode的type属性从哪里来的，这里我们回过头来重写下create函数：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">create</span>(<span class="params">type, attributes, ...children</span>)</span>&#123;</span><br><span class="line">	f(!type) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'element() needs a type.'</span>)</span><br><span class="line">    attributes = attributes || &#123;&#125;</span><br><span class="line">    <span class="comment">//处理子元素, 包括对Text类型的处理</span></span><br><span class="line">    children = <span class="built_in">Array</span>.prototype.reduce.call(children || [], reduceChildren, [])</span><br><span class="line"></span><br><span class="line">	 <span class="comment">//处理自定义组件</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">typeof</span> type === <span class="string">'object'</span>)&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">return</span> &#123;</span><br><span class="line">	        type: <span class="string">'thunk'</span>,</span><br><span class="line">	        fn: type.fn,</span><br><span class="line">	        props:attributes,</span><br><span class="line">	        children</span><br><span class="line">	    &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//处理Element类型</span></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        type: <span class="string">'native'</span>,</span><br><span class="line">        tagName: type,</span><br><span class="line">        attributes,</span><br><span class="line">        children,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 处理子元素</span></span><br><span class="line"><span class="comment">* @param &#123;Array&#125; children=[]</span></span><br><span class="line"><span class="comment">* @param &#123;Object&#125; vnode</span></span><br><span class="line"><span class="comment">* @return &#123;Array&#125; children 经过转换的vnode数组</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reduceChildren</span>(<span class="params">children, vnode</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(isString(vnode) || isNumber(vnode)) &#123;</span><br><span class="line">    	 <span class="comment">//&#123;type: 'text'&#125;</span></span><br><span class="line">        children.push(createTextElement(vnode))</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(isNull(vnode) || isUndefined(vnode))&#123;</span><br><span class="line">        children.push(createEmptyElement())</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">Array</span>.isArray(vnode))&#123;</span><br><span class="line">    	 <span class="comment">//处理&#123;children&#125;</span></span><br><span class="line">        children = [...children, ...vnode.reduce(reduceChildren, [])]</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        children.push(vnode)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> children</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h1><p>dom创建完成之后，就需要更新dom操作了。其实dom的更新可以抽象出一下几点</p>
+<ol>
+<li>添加（appendChild），增加了新的元素</li>
+<li>删除 (removeChild)，删除了元素</li>
+<li>取代 (replaceChild)，元素类型不同时元素取代</li>
+<li>更新（diffAttribute, diffChildren），元素类型相同，则比较attribute和children</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 更新node</span></span><br><span class="line"><span class="comment"> * @param node -dom node,  parent node of vdom</span></span><br><span class="line"><span class="comment"> * @param pre  -pre vnode</span></span><br><span class="line"><span class="comment"> * @param next -next vnode</span></span><br><span class="line"><span class="comment"> * @param index - child index in parent</span></span><br><span class="line"><span class="comment"> * @returns node</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">updateElement</span>(<span class="params">node, pre, next, index=<span class="number">0</span></span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(pre === next) <span class="keyword">return</span> node</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(!isUndefined(pre) &amp;&amp; isUndefined(next))&#123;</span><br><span class="line">        <span class="keyword">return</span> removeNode(node, pre, next, index)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(isUndefined(pre) &amp;&amp; !isUndefined(next))&#123;</span><br><span class="line">        node.appendChild(createElement(next))</span><br><span class="line">        <span class="keyword">return</span> node;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(!isNull(pre) &amp;&amp; isNull(next) || isNull(pre) &amp;&amp; !isNull(next))&#123;</span><br><span class="line">        <span class="keyword">return</span> replaceNode(node, pre, next, index)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(pre.type!==next.type)&#123;</span><br><span class="line">        <span class="keyword">return</span> replaceNode(node, pre, next, index)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(isNative(next))&#123;</span><br><span class="line">        <span class="keyword">if</span>(pre.tagName !== next.tagName)&#123;</span><br><span class="line">            <span class="keyword">return</span> replaceNode(node, pre, next, index)</span><br><span class="line">        &#125;</span><br><span class="line">        diffAttributes(node, pre, next, index)</span><br><span class="line">        <span class="keyword">return</span> diffChildren(node, pre, next, index)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(isText(next))&#123;</span><br><span class="line">        <span class="keyword">if</span>(pre.nodeValue !== next.nodeValue)&#123;</span><br><span class="line">            node.childNodes[index].nodeValue = next.nodeValue</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> node</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(isThunk(next))&#123;</span><br><span class="line">        <span class="keyword">if</span>(isSameThunk(pre, next))&#123;</span><br><span class="line">            <span class="keyword">return</span> updateThunk(node, pre, next, index)</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> replaceThunk(node, pre, next, index)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>文章中的代码大多参考了这里：</p>
+<ul>
+<li><a href="https://github.com/anthonyshort/deku" target="_blank" rel="noopener">deku 一个短小的类似react的表现层实现</a></li>
+<li><a href="https://github.com/rstacruz/decca" target="_blank" rel="noopener">decca</a></li>
+<li><a href="https://medium.com/@deathmood/how-to-write-your-own-virtual-dom-ee74acc13060" target="_blank" rel="noopener">how-to-write-your-own-virtual-dom</a></li>
+</ul>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#创建"><span class="toc-number">1.</span> <span class="toc-text">创建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#更新"><span class="toc-number">2.</span> <span class="toc-text">更新</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2017/07/12/实现自己的virtual-dom/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&text=实现自己的virtual dom"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&title=实现自己的virtual dom"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&is_video=false&description=实现自己的virtual dom"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=实现自己的virtual dom&body=Check out this article: http://yoursite.com/2017/07/12/实现自己的virtual-dom/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&title=实现自己的virtual dom"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&title=实现自己的virtual dom"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&title=实现自己的virtual dom"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&title=实现自己的virtual dom"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2017/07/12/实现自己的virtual-dom/&name=实现自己的virtual dom&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2019 Alex Liu
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'jjvvv';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
+</body>
+</html>
