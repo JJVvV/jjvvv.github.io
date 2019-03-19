@@ -10,16 +10,16 @@
 <meta name="keywords" content="template,vscode">
 <meta property="og:type" content="article">
 <meta property="og:title" content="VS Code 文件模板">
-<meta property="og:url" content="http://yoursite.com/2019/01/09/VS-Code-文件模板/index.html">
+<meta property="og:url" content="https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/index.html">
 <meta property="og:site_name" content="Alex">
 <meta property="og:description" content="曾经使用 webstorm，webstorm 创建文件的时候自带模板，比如想创建一个 html 文件，则 CMD + N 并输入 html 即可创建一个带有 html 模板的文件。在使用 vscode 之后，发现 vscode 不支持这种方式，找了很多插件发现都不尽如人意。就在刚才突然想到可以使用 snippets 来实现，只要转变一下思路（为啥之前没想到呢？）。虽然实现方法不同，但都很方便，而且">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/2019/01/09/VS-Code-文件模板/vscode_template.gif">
+<meta property="og:image" content="https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/vscode_template.gif">
 <meta property="og:updated_time" content="2019-03-19T15:21:35.167Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="VS Code 文件模板">
 <meta name="twitter:description" content="曾经使用 webstorm，webstorm 创建文件的时候自带模板，比如想创建一个 html 文件，则 CMD + N 并输入 html 即可创建一个带有 html 模板的文件。在使用 vscode 之后，发现 vscode 不支持这种方式，找了很多插件发现都不尽如人意。就在刚才突然想到可以使用 snippets 来实现，只要转变一下思路（为啥之前没想到呢？）。虽然实现方法不同，但都很方便，而且">
-<meta name="twitter:image" content="http://yoursite.com/2019/01/09/VS-Code-文件模板/vscode_template.gif">
+<meta name="twitter:image" content="https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/vscode_template.gif">
     
     
         
@@ -60,24 +60,35 @@
   <span id="menu">
     <span id="nav">
       <ul>
-         
-          <li><a href="/">Home</a></li>
-         
-          <li><a href="/about/">About</a></li>
-         
-          <li><a href="/archives/">Writing</a></li>
+        
+        <li>
+          <a href="/">Home</a>
+        </li>
+        
+        <li>
+          <a href="/about/">About</a>
+        </li>
+        
+        <li>
+          <a href="/archives/">Writing</a>
+        </li>
         
       </ul>
     </span>
     <br>
     <span id="actions">
       <ul>
+         
+        <li>
+          <a class="icon" href="/2018/12/27/typesafe-actions-简易实现/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a>
+        </li>
         
-        
-        <li><a class="icon" href="/2018/12/27/typesafe-actions-简易实现/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a>
+        </li>
+        <li>
+          <a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a>
+        </li>
       </ul>
       <span id="i-prev" class="info" style="display:none;">Previous post</span>
       <span id="i-next" class="info" style="display:none;">Next post</span>
@@ -87,16 +98,20 @@
     <br>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/01/09/VS-Code-文件模板/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&text=VS Code 文件模板"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&is_video=false&description=VS Code 文件模板"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=VS Code 文件模板&body=Check out this article: http://yoursite.com/2019/01/09/VS-Code-文件模板/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&name=VS Code 文件模板&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/"><i class="fab fa-facebook " aria-hidden="true"></i></a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&text=VS Code 文件模板"><i class="fab fa-twitter " aria-hidden="true"></i></a>
+  </li>
+  <!-- <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&is_video=false&description=VS Code 文件模板"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=VS Code 文件模板&body=Check out this article: https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&name=VS Code 文件模板&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li> -->
 </ul>
 
     </div>
@@ -165,15 +180,20 @@
         
           <div id="footer-post-container">
   <div id="footer-post">
-
     <div id="nav-footer" style="display: none">
       <ul>
-         
-          <li><a href="/">Home</a></li>
-         
-          <li><a href="/about/">About</a></li>
-         
-          <li><a href="/archives/">Writing</a></li>
+        
+        <li>
+          <a href="/">Home</a>
+        </li>
+        
+        <li>
+          <a href="/about/">About</a>
+        </li>
+        
+        <li>
+          <a href="/archives/">Writing</a>
+        </li>
         
       </ul>
     </div>
@@ -184,27 +204,30 @@
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2019/01/09/VS-Code-文件模板/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&text=VS Code 文件模板"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&is_video=false&description=VS Code 文件模板"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=VS Code 文件模板&body=Check out this article: http://yoursite.com/2019/01/09/VS-Code-文件模板/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2019/01/09/VS-Code-文件模板/&name=VS Code 文件模板&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&text=VS Code 文件模板"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a>
+  </li>
+  <!-- <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&is_video=false&description=VS Code 文件模板"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=VS Code 文件模板&body=Check out this article: https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&title=VS Code 文件模板"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://jjvvv.github.io/2019/01/09/VS-Code-文件模板/&name=VS Code 文件模板&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li> -->
 </ul>
 
     </div>
 
     <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+      <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+      <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+      <!-- <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a> -->
+      <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
     </div>
-
   </div>
 </div>
 
