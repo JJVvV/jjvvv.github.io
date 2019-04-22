@@ -6,17 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="单背景   格式如下：color image repeat position-x position-y/size(width) size(height) attachment origin clip。   123.bg&amp;#123;    background: #065a06 url(img/bg.jpg) no-repeat 0% 50%/100px 200px scroll padding-">
+    <meta name="description" content="单背景 格式如下：color image repeat position-x position-y/size(width) size(height) attachment origin clip。  123.bg&amp;#123;    background: #065a06 url(img/bg.jpg) no-repeat 0% 50%/100px 200px scroll padding-box">
+<meta name="keywords" content="CSS,background">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CSS background简写">
 <meta property="og:url" content="https://jjvvv.github.io/2017/10/08/CSS background简写/index.html">
 <meta property="og:site_name" content="Alex">
-<meta property="og:description" content="单背景   格式如下：color image repeat position-x position-y/size(width) size(height) attachment origin clip。   123.bg&amp;#123;    background: #065a06 url(img/bg.jpg) no-repeat 0% 50%/100px 200px scroll padding-">
+<meta property="og:description" content="单背景 格式如下：color image repeat position-x position-y/size(width) size(height) attachment origin clip。  123.bg&amp;#123;    background: #065a06 url(img/bg.jpg) no-repeat 0% 50%/100px 200px scroll padding-box">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-03-19T15:21:35.166Z">
+<meta property="og:updated_time" content="2019-04-22T08:52:46.527Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSS background简写">
-<meta name="twitter:description" content="单背景   格式如下：color image repeat position-x position-y/size(width) size(height) attachment origin clip。   123.bg&amp;#123;    background: #065a06 url(img/bg.jpg) no-repeat 0% 50%/100px 200px scroll padding-">
+<meta name="twitter:description" content="单背景 格式如下：color image repeat position-x position-y/size(width) size(height) attachment origin clip。  123.bg&amp;#123;    background: #065a06 url(img/bg.jpg) no-repeat 0% 50%/100px 200px scroll padding-box">
     
     
         
@@ -68,6 +69,10 @@
         
         <li>
           <a href="/archives/">Writing</a>
+        </li>
+        
+        <li>
+          <a href="/tags/">Tag</a>
         </li>
         
       </ul>
@@ -150,6 +155,11 @@
       
 
       
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/CSS/">CSS</a>, <a class="tag-link" href="/tags/background/">background</a>
+    </div>
+
 
     </div>
   </header>
@@ -158,20 +168,11 @@
   <div class="content" itemprop="articleBody">
     <ul>
 <li><p>单背景</p>
-<p>  格式如下：color image repeat position-x position-y/size(width) size(height) attachment origin clip。</p>
-  <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.bg</span>&#123;</span><br><span class="line">    <span class="attribute">background</span>: <span class="number">#065a06</span> <span class="built_in">url</span>(img/bg.jpg) no-repeat <span class="number">0%</span> <span class="number">50%</span>/<span class="number">100px</span> <span class="number">200px</span> scroll padding-box content-box;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<ul>
-<li><p>多背景</p>
-<p>  格式如下：image repeat position-x position-y/size(width) size(height) attachment origin clip, image repeat position-x position-y/size(width) size(height) attachment origin clip。注意到background-color要单独写。</p>
-<pre><code class="css"><span class="selector-class">.bg</span>{
-    <span class="attribute">background</span>: <span class="built_in">url</span>(img/bg.jpg) no-repeat <span class="number">0%</span> <span class="number">50%</span>/<span class="number">100px</span> <span class="number">200px</span> scroll padding-box content-box,
-     <span class="built_in">url</span>(img/bg2.jpg) no-repeat <span class="number">100%</span> <span class="number">50%</span>/<span class="number">100px</span> <span class="number">100px</span> scroll border-box padding-box;
-    <span class="attribute">background-color</span>: <span class="number">#065a06</span>; 
-}
+<pre><code>格式如下：color image repeat position-x position-y/size(width) size(height) attachment origin clip。
 
-</code></pre>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.bg</span>&#123;</span><br><span class="line">    <span class="attribute">background</span>: <span class="number">#065a06</span> <span class="built_in">url</span>(img/bg.jpg) no-repeat <span class="number">0%</span> <span class="number">50%</span>/<span class="number">100px</span> <span class="number">200px</span> scroll padding-box content-box;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</code></pre></li>
+<li><p>多背景<br>格式如下：image repeat position-x position-y/size(width) size(height) attachment origin clip, image repeat position-x position-y/size(width) size(height) attachment origin clip。注意到 background-color 要单独写。<br><code>css .bg{ background: url(img/bg.jpg) no-repeat 0% 50%/100px 200px scroll padding-box content-box, url(img/bg2.jpg) no-repeat 100% 50%/100px 100px scroll border-box padding-box; background-color: #065a06; }</code></p>
 </li>
 </ul>
 
@@ -202,6 +203,10 @@
         
         <li>
           <a href="/archives/">Writing</a>
+        </li>
+        
+        <li>
+          <a href="/tags/">Tag</a>
         </li>
         
       </ul>
@@ -254,6 +259,8 @@
           <li><a href="/about/">About</a></li>
          
           <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tag</a></li>
         
       </ul>
     </nav>
